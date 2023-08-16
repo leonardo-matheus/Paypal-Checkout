@@ -40,8 +40,7 @@ function PaymentForm() {
 
       if (response.ok) {
         const { orderId } = await response.json();
-        // Integração com o PayPal já foi feita no useEffect
-        // Agora você pode redirecionar ou mostrar uma mensagem de sucesso, por exemplo
+        alert(`Pedido enviado com sucesso! ID: ${orderId}`);
       } else {
         console.error('Erro ao enviar pedido para a API');
       }

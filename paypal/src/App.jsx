@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import React from 'react';
 import LeftCard from './components/LeftCard';
 import RightCard from './components/RightCard';
