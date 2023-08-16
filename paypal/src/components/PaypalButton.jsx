@@ -8,10 +8,10 @@ const PaypalButton = ({ total, onSuccess, onCancel }) => {
 
     if (paypalButtonContainer) {
       paypal.Button.render({
-        env: 'sandbox', // ou 'production' para ambiente de produção
+        env: 'sandbox', 
         client: {
-          sandbox: 'AVMI7am8CUTe3qaN4lI7c_-GiHxqAYoWClH142plQJ9VjU-NXT8vfsW9DT88A88gdEGltqLXm4PQ5_-z', // Substitua pelo seu ID de cliente sandbox
-          // production: 'YOUR_PRODUCTION_CLIENT_ID',
+          sandbox: 'AVMI7am8CUTe3qaN4lI7c_-GiHxqAYoWClH142plQJ9VjU-NXT8vfsW9DT88A88gdEGltqLXm4PQ5_-z', 
+
         },
         commit: true,
         payment: function (data, actions) {
@@ -27,12 +27,12 @@ const PaypalButton = ({ total, onSuccess, onCancel }) => {
         onAuthorize: function (data, actions) {
           return actions.payment.execute().then(function () {
             console.log('Payment successful!', data);
-            onSuccess(data); // Chame a função de sucesso passada como prop
+            onSuccess(data);
           });
         },
         onCancel: function (data) {
           console.log('Payment canceled.', data);
-          onCancel(data); // Chame a função de cancelamento passada como prop
+          onCancel(data); 
         }
       }, '#paypal-button-container');
     }

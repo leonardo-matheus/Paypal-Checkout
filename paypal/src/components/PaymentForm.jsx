@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import paypal from 'paypal-checkout';
 
 function PaymentForm() {
   const [firstName, setFirstName] = useState('');
@@ -10,7 +11,11 @@ function PaymentForm() {
   const [state, setState] = useState('');
   const [postalCode, setPostalCode] = useState('');
 
-  const handleFormSubmit = (event) => {
+  useEffect(() => {
+    integrateWithPayPal();
+  }, []);
+
+  const handleFormSubmit = async (event) => {
     event.preventDefault();
 
     const formData = {
@@ -24,33 +29,68 @@ function PaymentForm() {
       postalCode,
     };
 
-    // Enviar o objeto formData para o servidor ou API usando fetch ou axios
-    fetch('/api/submitOrder', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // Lidar com a resposta do servidor/API
-        console.log('Resposta do servidor:', data);
-        // Exemplo: mostrar uma mensagem de sucesso
-        alert('Pedido enviado com sucesso!');
-      })
-      .catch((error) => {
-        console.error('Erro ao enviar o formulário:', error);
-        // Exemplo: mostrar uma mensagem de erro
-        alert('Erro ao enviar o pedido. Tente novamente mais tarde.');
+    try {
+      const response = await fetch('/api/submitOrder', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
+
+      if (response.ok) {
+        const { orderId } = await response.json();
+        // Integração com o PayPal já foi feita no useEffect
+        // Agora você pode redirecionar ou mostrar uma mensagem de sucesso, por exemplo
+      } else {
+        console.error('Erro ao enviar pedido para a API');
+      }
+    } catch (error) {
+      console.error('Erro ao enviar pedido:', error);
+    }
   };
+
+  const integrateWithPayPal = () => {
+    paypal.Button.render({
+      env: 'sandbox', 
+      client: {
+        sandbox: 'AVMI7am8CUTe3qaN4lI7c_-GiHxqAYoWClH142plQJ9VjU-NXT8vfsW9DT88A88gdEGltqLXm4PQ5_-z', 
+      },
+      commit: true, // Exibir o botão "Pay Now" no popup
+      style: {
+        color: 'gold', // Cor do botão
+        size: 'medium', // Tamanho do botão
+      },
+      createOrder: function(data, actions) {
+        // Crie uma ordem para pagamento com o PayPal
+        return actions.order.create({
+          purchase_units: [{
+            amount: {
+              value: '30.00', // Substitua pelo valor do pedido
+            },
+          }],
+        });
+      },
+      onAuthorize: function(data, actions) {
+        // Ação executada quando o pagamento é autorizado
+        return actions.order.capture().then(function(details) {
+          console.log('Pagamento autorizado:', details);
+          // Você pode redirecionar ou exibir uma mensagem de sucesso aqui
+        });
+      },
+      onCancel: function(data) {
+        console.log('Pagamento cancelado:', data);
+        // Você pode exibir uma mensagem de cancelamento aqui
+      },
+    }, '#paypal-button-container');
+  };
+  
 
   return (
     <div className="form-block">
       <h3 className="titleForm">Complete seu pedido</h3>
       <form className="form" onSubmit={handleFormSubmit}>
-        <h4>Detalhes Pessoais</h4>
+        <h4>Personal Details</h4>
         <div className="form-name">
           <div className="form-name-item">
             <label htmlFor="first-name">First Name:</label>
@@ -96,7 +136,7 @@ function PaymentForm() {
           </div>
         </div>
 
-        <h4>Endereço de Entrega</h4>
+        <h4>Shipping Address</h4>
         <div className="form-name">
           <div className="form-name-item">
             <label htmlFor="address">Address:</label>
