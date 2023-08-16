@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout whit Paypal</title>
-    <!--favicon-->
-    <link rel="image" href="./img/favicon.png" type="image/x-icon">
+    <title>Checkout with Paypal</title>
+    <link rel="icon" href="./img/favicon.png" type="image/x-icon">
     <link rel="stylesheet" href="./css/style.css">
-    <!--Google Fonts-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
@@ -15,49 +13,149 @@
 <body>
     <section class="container">
         <div class="content">
+            <!-- Left Card -->
             <div class="leftCard">
                 <div class="logo">
                     <img class="logo-image" src="./img/logo.png" alt="logo">
                 </div>
-
                 <div class="order">
-                
                     <h2 class="order-title">Order Summary</h2>
                     <div class="order-items">
                         <div class="order-item">
                             <div class="order-item-image">
                                 <img src="./img/product-1.png" alt="product">
+                            </div>
+                            <div class="order-item-info">
+                                <h5>Camiseta PP on Heart</h5>
+                                <h6>Quantity: 1</h6>
+                                <h6>Size: M</h6>
+                                <h6>Total: $20.00</h6>
+                            </div>
                         </div>
                         <div class="order-item">
                             <div class="order-item-image">
                                 <img src="./img/product-2.png" alt="product">
+                            </div>
+                            <div class="order-item-info">
+                                <h5>Camiseta Paypal Logo</h5>
+                                <h6>Quantity: 1</h6>
+                                <h6>Size: P</h6>
+                                <h6>Total: $10.00</h6>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
                 <div class="total">
                     <h2 class="total-title">Total bill</h2>
-                    <h2 class="total-price">$ 0.00</h2>
+                    <h2 class="total-price" id="total-price">$30.00</h2>
                 </div>
             </div>
 
-            <!--Payment-->
+            <!-- Right Card -->
+            <div class="rightCard">
+                <div class="form-block"> 
+                    <h3 class="titleForm">Complete your order</h3>
+                    <form class="form">
+                        <h4>Personal Details</h4>
+                        <div class="form-name">
+                            <div class="form-name-item">
+                                <label for="first-name">First Name:</label>
+                                <input type="text" class="form-control" id="first-name">
+                            </div>
+                            <div class="form-name-item">
+                                <label for="last-name">Last Name:</label>
+                                <input type="text" class="form-control" id="last-name">
+                            </div>
+                        </div>
+                        <div class="login-info">
+                            <div class="form-name-item">
+                                <label for="email">Email:</label>
+                                <input type="email" class="form-control" id="email">
+                            </div>
+                            <div class="form-name-item">
+                                <label for="phone">Phone:</label>
+                                <input type="text" class="form-control" id="phone">
+                            </div>
+                        </div>
 
+                        <h4>Shipping Address</h4>
+                        <div class="form-name">
+                            <div class="form-name-item">
+                                <label for="address">Address:</label>
+                                <input type="text" class="form-control" id="address">
+                            </div>
+                            <div class="form-name-item">
+                                <label for="city">City:</label>
+                                <input type="text" class="form-control" id="city">
+                            </div>
+                        </div>
+                        <div class="form-name">
+                            <div class="form-name-item">
+                                <label for="state">State:</label>
+                                <input type="text" class="form-control" id="state">
+                            </div>
+                            <div class="form-name-item">
+                                <label for="postal-code">Postal Code:</label>
+                                <input type="text" class="form-control" id="postal-code">
+                            </div>
+                        </div>
+                    </form>
+                    <div class="payment-button">
+                        <div id="paypal-button-container"></div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="rightCard">
-            <div class="form-block">
-                <h3 class="titleForm">Complete your order</h3>
-                <form class="form">
-                        <label for="first-name">First Name: </label>
-                        <input type="text" class="form-control" id="first-name"></input>
-                        <label for="last-name">Last Name: </label>
-                        <input type="text" class="form-control" id="last-name"></input>
-                        <label for="email">Email: </label>
-                        <input type="email" class="form-control" id="email"></input>
-                </form>
-            </div>
+        <input type="hidden" id="quantity1" value="1">
+        <input type="hidden" id="price1" value="20.00">
+        <input type="hidden" id="quantity2" value="1">
+        <input type="hidden" id="price2" value="10.00">
     </section>
-    
+
+    <!-- Load checkout.js script -->
+    <script src="https://www.paypalobjects.com/api/checkout.js" data-version-4></script>
+
+    <!-- PayPal button JavaScript -->
+    <script>
+        window.addEventListener("load", function () {
+            var cartItems = [
+                { name: "Camiseta PP on Heart", price: 20.00, quantity: 1 },
+                { name: "Camiseta Paypal Logo", price: 10.00, quantity: 1 }
+            ];
+            
+            var total = 0;
+            for (var a = 0; a < cartItems.length; a++) {
+                total += (cartItems[a].price * cartItems[a].quantity);
+            }
+
+            // Render the PayPal button
+            paypal.Button.render({
+                env: 'sandbox', 
+                client: {
+                    sandbox: 'AVMI7am8CUTe3qaN4lI7c_-GiHxqAYoWClH142plQJ9VjU-NXT8vfsW9DT88A88gdEGltqLXm4PQ5_-z',
+                },
+                commit: true, // Show 'Pay Now' instead of 'Continue'
+                payment: function(data, actions) {
+                    // Create a payment with PayPal
+                    return actions.payment.create({
+                        transactions: [{
+                            amount: {
+                                total: total.toFixed(2),
+                                currency: 'USD'
+                            }
+                        }]
+                    });
+                },
+                onAuthorize: function(data, actions) {
+                    return actions.payment.execute().then(function() {
+                        console.log("Payment successful!", data);
+                    });
+                },
+                onCancel: function (data) {
+                    console.log("Payment canceled.", data);
+                }
+            }, '#paypal-button-container');
+        });
+    </script>
 </body>
 </html>
