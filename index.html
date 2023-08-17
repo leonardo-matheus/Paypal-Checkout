@@ -123,69 +123,18 @@
     <!-- PayPal button JavaScript -->
     <!-- ... (código HTML anterior) ... -->
 
-<script>
-    window.addEventListener("load", function () {
-        var cartItems = [
-            { name: "Camiseta PP on Heart", price: 20.00, quantity: 1 },
-            { name: "Camiseta Paypal Logo", price: 10.00, quantity: 1 }
-        ];
-
-        var total = 0;
-        for (var a = 0; a < cartItems.length; a++) {
-            total += (cartItems[a].price * cartItems[a].quantity);
-        }
-
-        // Render the PayPal button
-        paypal.Button.render({
-            env: 'sandbox', 
-            client: {
-                sandbox: 'AVMI7am8CUTe3qaN4lI7c_-GiHxqAYoWClH142plQJ9VjU-NXT8vfsW9DT88A88gdEGltqLXm4PQ5_-z',
-            },
-            commit: true, // Show 'Pay Now' instead of 'Continue'
-            payment: function(data, actions) {
-                // Create a payment with PayPal
-                return actions.payment.create({
-                    transactions: [{
-                        amount: {
-                            total: total.toFixed(2),
-                            currency: 'USD'
-                        }
-                    }],
-                    payer: {
-                        email_address: document.getElementById('email').value
-                    },
-                    shipping_address: {
-                        address_line_1: document.getElementById('address').value,
-                        admin_area_2: document.getElementById('city').value,
-                        admin_area_1: document.getElementById('state').value,
-                        postal_code: document.getElementById('postal-code').value,
-                        country_code: 'US' // Change this to the appropriate country code
-                    }
-                });
-            },
-            onAuthorize: function(data, actions) {
-                return actions.payment.execute().then(function() {
-                    console.log("Payment successful!", data);
-                });
-            },
-            onCancel: function (data) {
-                console.log("Payment canceled.", data);
-            }
-        }, '#paypal-button-container');
-    });
-</script>
-
+    <script>
         window.addEventListener("load", function () {
             var cartItems = [
                 { name: "Camiseta PP on Heart", price: 20.00, quantity: 1 },
                 { name: "Camiseta Paypal Logo", price: 10.00, quantity: 1 }
             ];
-
+    
             var total = 0;
             for (var a = 0; a < cartItems.length; a++) {
                 total += (cartItems[a].price * cartItems[a].quantity);
             }
-
+    
             // Render the PayPal button
             paypal.Button.render({
                 env: 'sandbox', 
@@ -201,7 +150,17 @@
                                 total: total.toFixed(2),
                                 currency: 'USD'
                             }
-                        }]
+                        }],
+                        payer: {
+                            email_address: document.getElementById('email').value
+                        },
+                        shipping_address: {
+                            address_line_1: document.getElementById('address').value,
+                            admin_area_2: document.getElementById('city').value,
+                            admin_area_1: document.getElementById('state').value,
+                            postal_code: document.getElementById('postal-code').value,
+                            country_code: 'US' // Change this to the appropriate country code
+                        }
                     });
                 },
                 onAuthorize: function(data, actions) {
@@ -215,5 +174,6 @@
             }, '#paypal-button-container');
         });
     </script>
+    
 </body>
 </html>
