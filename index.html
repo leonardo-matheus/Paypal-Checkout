@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <section class="container">
         <div class="content">
@@ -55,7 +57,8 @@
             <div class="rightCard">
                 <div class="form-block"> 
                     <h3 class="titleForm">Complete your order</h3>
-                    <form class="form">
+                        <form class="form" id="card-form">
+                        
                         <h4>Personal Details</h4>
                         <div class="form-name">
                             <div class="form-name-item">
@@ -99,6 +102,8 @@
                                 <input type="text" class="form-control" id="postal-code">
                             </div>
                         </div>
+                        </form>
+                        <button type="submit" class="btn">Pay</button>
                     </form>
                     <div class="payment-button">
                         <div id="paypal-button-container"></div>
@@ -116,13 +121,66 @@
     <script src="https://www.paypalobjects.com/api/checkout.js" data-version-4></script>
 
     <!-- PayPal button JavaScript -->
-    <script>
+    <!-- ... (código HTML anterior) ... -->
+
+<script>
+    window.addEventListener("load", function () {
+        var cartItems = [
+            { name: "Camiseta PP on Heart", price: 20.00, quantity: 1 },
+            { name: "Camiseta Paypal Logo", price: 10.00, quantity: 1 }
+        ];
+
+        var total = 0;
+        for (var a = 0; a < cartItems.length; a++) {
+            total += (cartItems[a].price * cartItems[a].quantity);
+        }
+
+        // Render the PayPal button
+        paypal.Button.render({
+            env: 'sandbox', 
+            client: {
+                sandbox: 'AVMI7am8CUTe3qaN4lI7c_-GiHxqAYoWClH142plQJ9VjU-NXT8vfsW9DT88A88gdEGltqLXm4PQ5_-z',
+            },
+            commit: true, // Show 'Pay Now' instead of 'Continue'
+            payment: function(data, actions) {
+                // Create a payment with PayPal
+                return actions.payment.create({
+                    transactions: [{
+                        amount: {
+                            total: total.toFixed(2),
+                            currency: 'USD'
+                        }
+                    }],
+                    payer: {
+                        email_address: document.getElementById('email').value
+                    },
+                    shipping_address: {
+                        address_line_1: document.getElementById('address').value,
+                        admin_area_2: document.getElementById('city').value,
+                        admin_area_1: document.getElementById('state').value,
+                        postal_code: document.getElementById('postal-code').value,
+                        country_code: 'US' // Change this to the appropriate country code
+                    }
+                });
+            },
+            onAuthorize: function(data, actions) {
+                return actions.payment.execute().then(function() {
+                    console.log("Payment successful!", data);
+                });
+            },
+            onCancel: function (data) {
+                console.log("Payment canceled.", data);
+            }
+        }, '#paypal-button-container');
+    });
+</script>
+
         window.addEventListener("load", function () {
             var cartItems = [
                 { name: "Camiseta PP on Heart", price: 20.00, quantity: 1 },
                 { name: "Camiseta Paypal Logo", price: 10.00, quantity: 1 }
             ];
-            
+
             var total = 0;
             for (var a = 0; a < cartItems.length; a++) {
                 total += (cartItems[a].price * cartItems[a].quantity);
